@@ -28,13 +28,13 @@ void swap(graph *a, graph *b)
 //CONTROLLARE INDICI (IN PSEUDODODICE INDICI PARTONO DA 1 MA QUI DA 0
 
 void max_heapify(graph heap_array[], maxHeap heap, int n){
-    int left = 2*n;
-    int right = 2*n+1;
+    int left = 2*n+1;
+    int right = 2*n+2;
     int maximum_pos;
-    if(left<=heap->heapSize && heap_array[left]->score > heap_array[n]->score)
+    if(left<heap->heapSize && heap_array[left]->score > heap_array[n]->score)
         maximum_pos=left;
     else maximum_pos=n;
-    if(right<=heap->heapSize && heap_array[right]->score > heap_array[maximum_pos]->score)
+    if(right<heap->heapSize && heap_array[right]->score > heap_array[maximum_pos]->score)
         maximum_pos=right;
     if (maximum_pos!=n){
         swap(&heap_array[n], &heap_array[maximum_pos]);
@@ -48,16 +48,38 @@ graph getMax (graph heap_array[]){
 
 graph removeMax (graph heap_array[], maxHeap heap){
     //if(heap->heapSize<1) si verifica mai questo caso?
-    graph maximum = heap_array[0];
-    heap_array[0]=heap_array[heap->heapSize-1];
-    heap->heapSize-=1;
-    max_heapify(heap_array, 0);
-    return maximum;
+    if(heap->heapSize<1){
+        graph maximum = heap_array[0];
+        heap_array[0]=heap_array[heap->heapSize-1];
+        heap->heapSize--;
+        max_heapify(heap_array, heap, 0);
+        return maximum;
+    }
 }
 
-void insert(graph graph1){
+void insert(graph heap_array[], maxHeap heap, graph graph_to_add){
+    if (heap->heapSize==0){
+        heap_array[0]=graph_to_add;
+        heap->heapSize++;
+    }
+    else
+    {
+        heap_array[heap->heapSize] = graph_to_add;
+        heap->heapSize++;
+        for (int i = heap->heapSize/2-1; i >= 0; i--){
+            max_heapify(heap_array, heap, i);
+        }
+    }
 
 }
+
+void print_heap(graph heap_Array, int size){
+    for(int i=0; i<size; i++){
+        putchar_unlocked(heap_Array->ID);
+        putchar_unlocked(' ');
+    }
+}
+
 
 
 
