@@ -6,17 +6,39 @@ enum command {aggiungiGrafo, TopK};
 
 /* ___ DATA STRUCTURES ___ */
 typedef struct{
-    unsigned int ID;
-    unsigned int score; //serve long int? qual è massimo raggiungibile?
-} graph;
+    int ID;
+    int score; //serve long int? qual è massimo raggiungibile?
+} *graph;
 
 typedef struct{
-    unsigned int length;
-    unsigned int heapSize;
-} maxHeap;
+    int length;
+    int heapSize;
+} *maxHeap;
 
 
 /* ___ HEAP ___ */
+
+void swap(graph *a, graph *b)
+{
+    graph temp = *b;
+    *b = *a;
+    *a = temp;
+}
+
+void max_heapify(graph heap_array[], maxHeap heap, int n){
+    int left = 2*n;
+    int right = 2*n+1;
+    int maximum_pos;
+    if(left<=heap->heapSize && heap_array[left]->score > heap_array[n]->score)
+        maximum_pos=left;
+    else maximum_pos=n;
+    if(right<=heap->heapSize && heap_array[right]->score > heap_array[maximum_pos]->score)
+        maximum_pos=right;
+    if (maximum_pos!=n){
+        swap(&heap_array[n], &heap_array[maximum_pos]);
+        max_heapify(heap_array,heap,maximum_pos);
+    }
+}
 
 void insert(graph graph1){
 
