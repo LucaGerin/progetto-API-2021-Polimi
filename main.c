@@ -74,7 +74,7 @@ void insert(graph heap_array[], maxHeap heap, graph graph_to_add){
 }
 
 void print_heap(graph heap_Array[], int size){
-    putchar_unlocked(heap_Array[0]->ID)
+    putchar_unlocked(heap_Array[0]->ID);
     for(int i=1; i<size; i++){
         putchar_unlocked(' ');
         putchar_unlocked(heap_Array[i]->ID);
