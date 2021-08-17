@@ -13,6 +13,13 @@ typedef struct{
 typedef graph *P_GRAPH;
 
 typedef struct{
+    int number;
+    long distance;
+    int predecessor;
+}node;
+typedef node *P_NODE;
+
+typedef struct{
     int length;
     int size;
 } max_heap;
@@ -34,10 +41,10 @@ void swap_graph(P_GRAPH a, P_GRAPH b)
     a = temp;
 }
 
-void swap_long_int(long *a, long *b){
-    int temp = *b;
-    *b = *a;
-    *a = temp;
+void swap_nodes(P_NODE a, P_NODE b){
+    P_NODE temp = b;
+    b = a;
+    a = temp;
 
 }
 
@@ -56,18 +63,18 @@ void max_heapify(P_GRAPH heap_array[], P_MAX_HEAP heap, int n){
     }
 }
 
-void min_heapify(long distances[], P_MIN_HEAP heap, int n){
+void min_heapify(P_NODE nodes[], P_MIN_HEAP heap, int n){
     int left = 2*n+1;
     int right = 2*n+2;
     int minimum_pos;
-    if (left < heap->size && distances[left] < distances[n])
+    if (left < heap->size && nodes[left]->distance < nodes[n]->distance)
         minimum_pos = left;
     else minimum_pos=n;
-    if (right < heap->size && distances[right] < distances[minimum_pos])
+    if (right < heap->size && nodes[right]->distance < nodes[minimum_pos]->distance)
         minimum_pos = right;
     if (minimum_pos != n){
-        swap_long_int(&distances[n], &distances[minimum_pos]);
-        min_heapify(distances, heap, minimum_pos);
+        swap_nodes(nodes[n], nodes[minimum_pos]);
+        min_heapify(nodes, heap, minimum_pos);
     }
 }
 
@@ -75,18 +82,18 @@ P_GRAPH getMax (P_GRAPH heap_array[]){
     return heap_array[0];
 }
 
-long getMin (long distances[]){
-    return distances[0];
+P_NODE getMin (P_NODE nodes[]){
+    return nodes[0];
 }
 
-long removeMin (long distances[], P_MIN_HEAP heap){
+P_NODE removeMin (P_NODE nodes[], P_MIN_HEAP heap){
     if(heap->size<1){
         //return ??? cosa returno?
     }
-    long minimum = distances[0];
-    distances[0]=distances[heap->size-1];
+    P_NODE minimum = nodes[0];
+    nodes[0]=nodes[heap->size - 1];
     heap->size--;
-    min_heapify(distances,heap, 0);
+    min_heapify(nodes, heap, 0);
     return minimum;
 
 }
@@ -118,16 +125,27 @@ void insert_max_heap(P_GRAPH *heap_array, P_MAX_HEAP heap, graph *graph_to_add){
     }
 }
 
-void insert_min_heap(long *distances, P_MIN_HEAP heap, long long_to_add){
-    distances[heap->size]=long_to_add;
+void insert_min_heap(P_NODE *nodes, P_MIN_HEAP heap, P_NODE node_to_add){
+    nodes[heap->size]=node_to_add;
     heap->size++;
 
     int current=heap->size;
-    while(current!=0 && distances[(current-1)/2] > distances[current]){
-        swap_long_int(&distances[current], &distances[(current-1)/2]);
+    while(current!=0 && nodes[(current - 1) / 2]->distance > nodes[current]->distance){
+        swap_nodes(nodes[current], nodes[(current - 1) / 2]);
         current=(current-1)/2;
     }
 }
+
+
+void decrease_distance(P_NODE *nodes, P_MIN_HEAP heap, int index, int new_distance){
+    nodes[index]->distance = new_distance;
+    while (index != 0 && nodes[(index-1)/2] > nodes[index])
+    {
+        swap_nodes(nodes[index], nodes[(index-1)/2]);
+        index = (index-1)/2;
+    }
+}
+
 
 void print_heap(P_GRAPH heap_Array[], int size){
     putchar_unlocked(heap_Array[0]->ID);
@@ -260,12 +278,45 @@ int readCommand(){
 }
 
 
+
+long dijkstra(void *matrix, int dimension){
+
+    int (*p_matrix)[dimension][dimension] = (int (*)[dimension][dimension]) matrix;
+    long score=0;
+    P_MIN_HEAP q = malloc(sizeof (min_heap));
+    P_NODE q_vector[dimension];
+    q->size=0;
+    q->length=dimension;
+    for(int i=1; i<dimension; i++){
+        P_NODE v_node = malloc(sizeof(node));
+        v_node->number=i;
+        v_node->distance=-1;
+        v_node->predecessor=-1;
+        insert_min_heap(q_vector, q, v_node);
+    }
+
+    while (q->size>0){
+        P_NODE u = removeMin(q_vector, q);
+        for(int succ=0; succ<dimension && p_matrix[u->number][succ]>0 ;succ++){
+            long new_distance = u->distance + (long)(int)*p_matrix[u->number][succ];
+            //if v:dist > ndis
+            //  succ:dist  = ndis
+            //  succ:prev  ) u
+            //  DecrementaPri(Q; v; ndis)
+        }
+    }
+}
+
+
+
 /* ___ MAIN ___*/
+
+
 int main() {
 
     int dimension, command;
 
-    P_MAX_HEAP heap = malloc(sizeof(heap));
+    P_MAX_HEAP heap = malloc(sizeof(max_heap));
     heap->size=0;
     heap->length=10;//line to remove
 
