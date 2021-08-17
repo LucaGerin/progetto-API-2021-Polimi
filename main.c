@@ -8,7 +8,7 @@ enum command {aggiungiGrafo, TopK};
 /* ___ DATA STRUCTURES ___ */
 typedef struct{
     int ID;
-    int score; //serve long int? qual è massimo raggiungibile?
+    long score; //serve long int? qual è massimo raggiungibile?
 } graph;
 typedef graph *P_GRAPH;
 
@@ -118,7 +118,16 @@ void insert_max_heap(P_GRAPH *heap_array, P_MAX_HEAP heap, graph *graph_to_add){
     }
 }
 
-void insert_min_heap(long *distances, P_MIN_HEAP heap, long long_to_add); //TO WRITE
+void insert_min_heap(long *distances, P_MIN_HEAP heap, long long_to_add){
+    distances[heap->size]=long_to_add;
+    heap->size++;
+
+    int current=heap->size;
+    while(current!=0 && distances[(current-1)/2] > distances[current]){
+        swap_long_int(&distances[current], &distances[(current-1)/2]);
+        current=(current-1)/2;
+    }
+}
 
 void print_heap(P_GRAPH heap_Array[], int size){
     putchar_unlocked(heap_Array[0]->ID);
@@ -134,7 +143,18 @@ void print_heap_safe(P_GRAPH heap_Array[], int size){
     }
 }
 
-
+int search_max_heap(P_GRAPH heap_array[], max_heap heap, int root_index, long score){
+    if(root_index < 0 || root_index > heap.size - 1) return 0;
+    else{
+        long current_score = heap_array[root_index]->score;
+        if(current_score==score) return 1;
+        else {
+            if(current_score<score) return 0;
+            if(search_max_heap(heap_array, heap, root_index * 2 + 1, score)) return 1;
+            if(search_max_heap(heap_array, heap, root_index * 2 + 2, score)) return 1;
+        }
+    }
+}
 
 
 
