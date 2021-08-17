@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #define MAX 3000  /*massima lunghezza riga input*/
 
@@ -8,76 +9,128 @@ enum command {aggiungiGrafo, TopK};
 typedef struct{
     int ID;
     int score; //serve long int? qual è massimo raggiungibile?
-} *graph;
+} graph;
+typedef graph *P_GRAPH;
 
 typedef struct{
     int length;
-    int heapSize;
-} *maxHeap;
+    int size;
+} max_heap;
+typedef max_heap *P_MAX_HEAP;
+
+typedef struct{
+    int length;
+    int size;
+} min_heap;
+typedef min_heap *P_MIN_HEAP;
 
 
 /* ___ HEAP ___ */
 
-void swap(graph *a, graph *b)
+void swap_graph(P_GRAPH a, P_GRAPH b)
 {
-    graph temp = *b;
-    *b = *a;
-    *a = temp;
+    P_GRAPH temp = b;
+    b = a;
+    a = temp;
 }
 
-//CONTROLLARE INDICI (IN PSEUDODODICE INDICI PARTONO DA 1 MA QUI DA 0
+void swap_long_int(long *a, long *b){
+    int temp = *b;
+    *b = *a;
+    *a = temp;
 
-void max_heapify(graph heap_array[], maxHeap heap, int n){
+}
+
+void max_heapify(P_GRAPH heap_array[], P_MAX_HEAP heap, int n){
     int left = 2*n+1;
     int right = 2*n+2;
     int maximum_pos;
-    if(left<heap->heapSize && heap_array[left]->score > heap_array[n]->score)
+    if(left<heap->size && heap_array[left]->score > heap_array[n]->score)
         maximum_pos=left;
     else maximum_pos=n;
-    if(right<heap->heapSize && heap_array[right]->score > heap_array[maximum_pos]->score)
+    if(right<heap->size && heap_array[right]->score > heap_array[maximum_pos]->score)
         maximum_pos=right;
     if (maximum_pos!=n){
-        swap(&heap_array[n], &heap_array[maximum_pos]);
+        swap_graph(heap_array[n], heap_array[maximum_pos]);
         max_heapify(heap_array,heap,maximum_pos);
     }
 }
 
-graph getMax (graph heap_array[]){
+void min_heapify(long distances[], P_MIN_HEAP heap, int n){
+    int left = 2*n+1;
+    int right = 2*n+2;
+    int minimum_pos;
+    if (left < heap->size && distances[left] < distances[n])
+        minimum_pos = left;
+    else minimum_pos=n;
+    if (right < heap->size && distances[right] < distances[minimum_pos])
+        minimum_pos = right;
+    if (minimum_pos != n){
+        swap_long_int(&distances[n], &distances[minimum_pos]);
+        min_heapify(distances, heap, minimum_pos);
+    }
+}
+
+P_GRAPH getMax (P_GRAPH heap_array[]){
     return heap_array[0];
 }
 
-graph removeMax (graph heap_array[], maxHeap heap){
-    //if(heap->heapSize<1) si verifica mai questo caso?
-    if(heap->heapSize<1){
-        graph maximum = heap_array[0];
-        heap_array[0]=heap_array[heap->heapSize-1];
-        heap->heapSize--;
-        max_heapify(heap_array, heap, 0);
-        return maximum;
-    }
+long getMin (long distances[]){
+    return distances[0];
 }
 
-void insert(graph heap_array[], maxHeap heap, graph graph_to_add){
-    if (heap->heapSize==0){
+long removeMin (long distances[], P_MIN_HEAP heap){
+    if(heap->size<1){
+        //return ??? cosa returno?
+    }
+    long minimum = distances[0];
+    distances[0]=distances[heap->size-1];
+    heap->size--;
+    min_heapify(distances,heap, 0);
+    return minimum;
+
+}
+
+P_GRAPH removeMax (P_GRAPH heap_array[], P_MAX_HEAP heap) {
+    if(heap->size<1){
+        // si verifica mai questo caso? lo controllo qui o fuori dalla funzione?
+        //return ...
+    }
+    P_GRAPH maximum = heap_array[0];
+    heap_array[0]=heap_array[heap->size - 1];
+    heap->size--;
+    max_heapify(heap_array, heap, 0);
+    return maximum;
+}
+
+void insert_max_heap(P_GRAPH *heap_array, P_MAX_HEAP heap, graph *graph_to_add){
+    if (heap->size == 0){
         heap_array[0]=graph_to_add;
-        heap->heapSize++;
+        heap->size++;
     }
     else
     {
-        heap_array[heap->heapSize] = graph_to_add;
-        heap->heapSize++;
-        for (int i = heap->heapSize/2-1; i >= 0; i--){
+        heap_array[heap->size] = graph_to_add;
+        heap->size++;
+        for (int i = heap->size / 2 - 1; i >= 0; i--){
             max_heapify(heap_array, heap, i);
         }
     }
-
 }
 
-void print_heap(graph heap_Array[], int size){
+void insert_min_heap(long *distances, P_MIN_HEAP heap, long long_to_add); //TO WRITE
+
+void print_heap(P_GRAPH heap_Array[], int size){
     putchar_unlocked(heap_Array[0]->ID);
     for(int i=1; i<size; i++){
         putchar_unlocked(' ');
         putchar_unlocked(heap_Array[i]->ID);
+    }
+}
+
+void print_heap_safe(P_GRAPH heap_Array[], int size){
+    for(int i=0; i<size; i++){
+        printf("%d ",heap_Array[i]->ID);
     }
 }
 
@@ -86,6 +139,9 @@ void print_heap(graph heap_Array[], int size){
 
 
 /* ___ FUNCTIONS ___*/
+
+
+
 
 /**
  * method to check if a char given as parameter is a number
@@ -154,7 +210,7 @@ void readMatrix(int dimension, void *result){
  * @param dimension is a pointer to an int into which to store d
  * @param leaderBoardDimension is a pointer to an int into which to store k
  */
-void readFirstLine( int *dimension, int *leaderBoardDimension){
+void readFirstLine( int *dimension, int *leaderBoardDimension){ //DEVONO ESSERE SEPARATI DA SPAZIO O DA VIRGOLA?? su slides esempio diverso da spiegazione
     char input[MAX];
     fgets(input, MAX, stdin);
 
@@ -187,11 +243,40 @@ int readCommand(){
 /* ___ MAIN ___*/
 int main() {
 
-    int dimension, k, command;
-    int matrix[dimension][dimension];
+    int dimension, command;
 
-    readFirstLine(&dimension, &k);
-    printf("DEBUG: la prima riga contiene %d,%d", dimension, k);
+    P_MAX_HEAP heap = malloc(sizeof(heap));
+    heap->size=0;
+    heap->length=10;//line to remove
+
+
+    readFirstLine(&dimension, &heap->length);
+    printf("DEBUG: la prima riga contiene %d,%d", dimension, heap->length);
+
+
+    P_GRAPH heap_array[heap->length];
+    //int matrix[heap->length][heap->length];
+
+
+    P_GRAPH graph1 = malloc(sizeof(graph));
+    graph1->ID=0;
+    graph1->score=100;
+
+    P_GRAPH graph2 = malloc(sizeof(graph));
+    graph2->ID=1;
+    graph2->score=150;
+
+    insert_max_heap(heap_array, heap, graph1);
+    printf("size=%d, length=%d\n", heap->size, heap->length);
+    print_heap_safe(heap_array, heap->size);
+
+    insert_max_heap(heap_array, heap, graph2);
+    printf("size=%d, length=%d\n", heap->size, heap->length);
+    print_heap_safe(heap_array, heap->size);
+
+
+
+/*
 
     while(1){
 
@@ -207,6 +292,6 @@ int main() {
         break; //TO REMOVE
 
     }
-
+*/
     return 0;
 }
