@@ -3,8 +3,6 @@
 
 #define MAX 3000  /*massima lunghezza riga input*/
 
-enum command {aggiungiGrafo, TopK};
-
 /* ___ DATA STRUCTURES ___ */
 typedef struct{
     int ID;
@@ -36,15 +34,15 @@ typedef min_heap *P_MIN_HEAP;
 
 void swap_graph(P_GRAPH a, P_GRAPH b)
 {
-    P_GRAPH temp = b;
-    b = a;
-    a = temp;
+    graph temp = *b;
+    *b = *a;
+    *a = temp;
 }
 
 void swap_nodes(P_NODE a, P_NODE b){
-    P_NODE temp = b;
-    b = a;
-    a = temp;
+    node temp = *b;
+    *b = *a;
+    *a = temp;
 
 }
 
@@ -81,11 +79,13 @@ void min_heapify(P_NODE nodes[], P_MIN_HEAP heap, int n){
 P_GRAPH getMax (P_GRAPH heap_array[]){
     return heap_array[0];
 }
-
+/*
 P_NODE getMin (P_NODE nodes[]){
     return nodes[0];
 }
+ */
 
+/*
 P_NODE removeMin (P_NODE nodes[], P_MIN_HEAP heap){
     if(heap->size<1){
         //return ??? cosa returno?
@@ -97,6 +97,8 @@ P_NODE removeMin (P_NODE nodes[], P_MIN_HEAP heap){
     return minimum;
 
 }
+*/
+
 
 P_GRAPH removeMax (P_GRAPH heap_array[], P_MAX_HEAP heap) {
     if(heap->size<1){
@@ -125,6 +127,7 @@ void insert_max_heap(P_GRAPH *heap_array, P_MAX_HEAP heap, graph *graph_to_add){
     }
 }
 
+/*
 void insert_min_heap(P_NODE *nodes, P_MIN_HEAP heap, P_NODE node_to_add){
     nodes[heap->size]=node_to_add;
     heap->size++;
@@ -135,8 +138,10 @@ void insert_min_heap(P_NODE *nodes, P_MIN_HEAP heap, P_NODE node_to_add){
         current=(current-1)/2;
     }
 }
+ */
 
 
+/*
 void decrease_distance(P_NODE *nodes, P_MIN_HEAP heap, int index, int new_distance){
     nodes[index]->distance = new_distance;
     while (index != 0 && nodes[(index-1)/2] > nodes[index])
@@ -145,20 +150,14 @@ void decrease_distance(P_NODE *nodes, P_MIN_HEAP heap, int index, int new_distan
         index = (index-1)/2;
     }
 }
-
+*/
 
 void print_heap(P_GRAPH heap_Array[], int size){
-    putchar_unlocked(heap_Array[0]->ID);
-    for(int i=1; i<size; i++){
-        putchar_unlocked(' ');
-        putchar_unlocked(heap_Array[i]->ID);
-    }
-}
-
-void print_heap_safe(P_GRAPH heap_Array[], int size){
-    for(int i=0; i<size; i++){
-        printf("%d ",heap_Array[i]->ID);
-    }
+    int i=0;
+    do{
+        printf("%d", heap_Array[i]->ID);
+        i++;
+    }while(i<size && fputs(" ", stdout));
 }
 
 int search_max_heap(P_GRAPH heap_array[], max_heap heap, int root_index, long score){
@@ -199,19 +198,30 @@ int search_min_heap(P_NODE heap_array[], min_heap heap, int root_index, long dis
  * @param x is the char given
  * @return 1 if x is a number, 0 otherwise
  */
+/*
 int is_num (char x){
-    if (x>=48 && x<=57) return 1;
+   if (x>=48 && x<=57) return 1;
+   else return 0;
+}
+*/
+
+/**
+ * method to check if a char given as parameter is a space
+ * @param x is the char given
+ * @return 1 if x is a space, 0 otherwise
+ */
+int is_space (char x){
+    if (x==32) return 1;
     else return 0;
 }
-
 
 /**
  * method to check if a char given as parameter is a comma
  * @param x is the char given
  * @return 1 if x is a comma, 0 otherwise
  */
-int is_space (char x){
-    if (x==32) return 1;
+int is_comma (char x){
+    if (x==44) return 1;
     else return 0;
 }
 
@@ -230,7 +240,7 @@ void ConvertMatrixLine(char *line, int *array_to_fill, int amountOfNumbers){
 
         res=0;
 
-        for(; !is_space(line[index]); index++){
+        for(; !is_comma(line[index]); index++){
             res=res*10+(line[index]-48);
         }
 
@@ -284,14 +294,15 @@ void readFirstLine( int *dimension, int *leaderBoardDimension){ //DEVONO ESSERE 
  * Method to read a command
  * @return the first letter of the line on the stdin
  */
+ /*
 int readCommand(){
     char line[15];
-    fgets(line, 15, stdin);
+    char* result = fgets(line, 15, stdin);
     return line[0];
 }
+*/
 
-
-
+/*
 void dijkstra_min_heap(void *matrix, int dimension){
 
     int (*p_matrix)[dimension][dimension] = (int (*)[dimension][dimension]) matrix;
@@ -319,13 +330,13 @@ void dijkstra_min_heap(void *matrix, int dimension){
         }
     }
 }
-
+*/
 
 long dijkstra_matrix(void *matrix, int dimension){     //oppure long p_matrix[MAX][MAX]
 
     int (*p_matrix)[dimension][dimension] = (int (*)[dimension][dimension]) matrix;
     long distance[dimension], minimum_distance;
-    int predecessor[dimension], visited[dimension],  nextnode;
+    int predecessor[dimension], visited[dimension],  next_node;
 
     int i,j;
 
@@ -348,15 +359,15 @@ long dijkstra_matrix(void *matrix, int dimension){     //oppure long p_matrix[MA
         for(i=0; i < dimension; i++){
             if((distance[i] < minimum_distance || (distance[i]!=-1 && minimum_distance==-1)) && !visited[i]){
                 minimum_distance=distance[i];
-                nextnode=i;
+                next_node=i;
             }
         }
-        visited[nextnode]=1;
+        visited[next_node]=1;
         for(i=0; i < dimension; i++)
             if(!visited[i])
-                if(minimum_distance + *p_matrix[nextnode][i] < distance[i]){
-                    distance[i]= minimum_distance + *p_matrix[nextnode][i];
-                    predecessor[i]=nextnode;
+                if(minimum_distance + *p_matrix[next_node][i] < distance[i]){
+                    distance[i]= minimum_distance + *p_matrix[next_node][i];
+                    predecessor[i]=next_node;
                 }
         current++;
     }
@@ -374,55 +385,55 @@ long dijkstra_matrix(void *matrix, int dimension){     //oppure long p_matrix[MA
 
 int main() {
 
-    int dimension, command;
+    int dimension;
 
     P_MAX_HEAP heap = malloc(sizeof(max_heap));
     heap->size=0;
-    heap->length=10;//line to remove
-
 
     readFirstLine(&dimension, &heap->length);
-    printf("DEBUG: la prima riga contiene %d,%d", dimension, heap->length);
-
 
     P_GRAPH heap_array[heap->length];
-    //int matrix[heap->length][heap->length];
+    int matrix[heap->length][heap->length];
 
+    int ID_counter=0;
 
-    P_GRAPH graph1 = malloc(sizeof(graph));
-    graph1->ID=0;
-    graph1->score=100;
+    char line[15];
 
-    P_GRAPH graph2 = malloc(sizeof(graph));
-    graph2->ID=1;
-    graph2->score=150;
+    while((fgets(line, 15, stdin)) != NULL){
 
-    insert_max_heap(heap_array, heap, graph1);
-    printf("size=%d, length=%d\n", heap->size, heap->length);
-    print_heap_safe(heap_array, heap->size);
-
-    insert_max_heap(heap_array, heap, graph2);
-    printf("size=%d, length=%d\n", heap->size, heap->length);
-    print_heap_safe(heap_array, heap->size);
-
-
-
-/*
-
-    while(1){
-
-        if(readCommand()==84){ //TopK
-
-            readMatrix(dimension, matrix);
-
+        if(line[0]==84){ //TopK
+            print_heap(heap_array, heap->size);
         }
         else{ //AggiungiGrafo
 
+            readMatrix(dimension, matrix);
+            long score = dijkstra_matrix(matrix, dimension);
+
+            if(heap->size < heap->length){
+
+                P_GRAPH new_graph = malloc(sizeof (graph));
+                new_graph->ID=ID_counter;
+                new_graph->score=score;
+                insert_max_heap(heap_array, heap, new_graph);
+            }
+            else if(score < getMax(heap_array)->score){
+
+                P_GRAPH removed = removeMax(heap_array, heap);
+                free(removed);
+
+                P_GRAPH new_graph = malloc(sizeof (graph));
+                new_graph->ID=ID_counter;
+                new_graph->score=score;
+                insert_max_heap(heap_array, heap, new_graph);
+            }
+
+            ID_counter++;
+
+
         }
 
-        break; //TO REMOVE
-
     }
-*/
+
+    free(heap);
     return 0;
 }
