@@ -172,9 +172,22 @@ int search_max_heap(P_GRAPH heap_array[], max_heap heap, int root_index, long sc
             if(search_max_heap(heap_array, heap, root_index * 2 + 2, score)) return 1;
         }
     }
+    return 0;
 }
 
-
+int search_min_heap(P_NODE heap_array[], min_heap heap, int root_index, long distance){
+    if(root_index < 0 || root_index > heap.size - 1) return 0;
+    else{
+        long current_distance = heap_array[root_index]->distance;
+        if(current_distance == distance) return 1;
+        else {
+            if(current_distance > distance) return 0;
+            if(search_min_heap(heap_array, heap, root_index * 2 + 1, distance)) return 1;
+            if(search_min_heap(heap_array, heap, root_index * 2 + 2, distance)) return 1;
+        }
+    }
+    return 0;
+}
 
 /* ___ FUNCTIONS ___*/
 
