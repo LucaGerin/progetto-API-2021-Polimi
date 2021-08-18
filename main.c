@@ -152,12 +152,14 @@ void decrease_distance(P_NODE *nodes, P_MIN_HEAP heap, int index, int new_distan
 }
 */
 
-void print_heap(P_GRAPH heap_Array[], int size){
-    int i=0;
-    do{
-        printf("%d", heap_Array[i]->ID);
-        i++;
-    }while(i<size && fputs(" ", stdout));
+void print_heap(P_GRAPH heap_Array[], P_MAX_HEAP heap){
+    if(heap->size>0){
+        int i=0;
+        do{
+            printf("%d", heap_Array[i]->ID);
+            i++;
+        }while(i<heap->size && fputs(" ", stdout));
+    }
 }
 
 int search_max_heap(P_GRAPH heap_array[], max_heap heap, int root_index, long score){
@@ -402,7 +404,9 @@ int main() {
     while((fgets(line, 15, stdin)) != NULL){
 
         if(line[0]==84){ //TopK
-            print_heap(heap_array, heap->size);
+
+            print_heap(heap_array, heap);
+
         }
         else{ //AggiungiGrafo
 
