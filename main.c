@@ -210,8 +210,8 @@ int is_num (char x){
  * @param x is the char given
  * @return 1 if x is a comma, 0 otherwise
  */
-int is_comma (char x){
-    if (x==44) return 1;
+int is_space (char x){
+    if (x==32) return 1;
     else return 0;
 }
 
@@ -230,7 +230,7 @@ void ConvertMatrixLine(char *line, int *array_to_fill, int amountOfNumbers){
 
         res=0;
 
-        for(;!is_comma(line[index]);index++){
+        for(; !is_space(line[index]); index++){
             res=res*10+(line[index]-48);
         }
 
@@ -267,7 +267,7 @@ void readFirstLine( int *dimension, int *leaderBoardDimension){ //DEVONO ESSERE 
 
     int res=0, i=0;
 
-    for(;!is_comma(input[i]);i++){
+    for(; !is_space(input[i]); i++){
         res=res*10+(input[i]-48);
     }
     *dimension=res;
@@ -285,14 +285,14 @@ void readFirstLine( int *dimension, int *leaderBoardDimension){ //DEVONO ESSERE 
  * @return the first letter of the line on the stdin
  */
 int readCommand(){
-    char line[MAX];
-    fgets(line, MAX, stdin);
+    char line[15];
+    fgets(line, 15, stdin);
     return line[0];
 }
 
 
 
-long dijkstra(void *matrix, int dimension){
+void dijkstra_min_heap(void *matrix, int dimension){
 
     int (*p_matrix)[dimension][dimension] = (int (*)[dimension][dimension]) matrix;
     long score=0;
@@ -318,6 +318,53 @@ long dijkstra(void *matrix, int dimension){
             //  DecrementaPri(Q; v; ndis)
         }
     }
+}
+
+
+long dijkstra_matrix(void *matrix, int dimension){     //oppure long p_matrix[MAX][MAX]
+
+    int (*p_matrix)[dimension][dimension] = (int (*)[dimension][dimension]) matrix;
+    long distance[dimension], minimum_distance;
+    int predecessor[dimension], visited[dimension],  nextnode;
+
+    int i,j;
+
+    for(i=0; i < dimension; i++)
+        for(j=0; j < dimension; j++){
+            if(p_matrix[i][j] == 0)
+                *p_matrix[i][j] = -1;
+        }
+    for(i=0; i < dimension; i++){
+        distance[i]= (long) p_matrix[0][i];
+        predecessor[i]=0;
+        visited[i]=0;
+    }
+    distance[0]=0;
+    visited[0]=1;
+
+    int current=1;
+    while(current < dimension - 1){
+        minimum_distance=-1;
+        for(i=0; i < dimension; i++){
+            if((distance[i] < minimum_distance || (distance[i]!=-1 && minimum_distance==-1)) && !visited[i]){
+                minimum_distance=distance[i];
+                nextnode=i;
+            }
+        }
+        visited[nextnode]=1;
+        for(i=0; i < dimension; i++)
+            if(!visited[i])
+                if(minimum_distance + *p_matrix[nextnode][i] < distance[i]){
+                    distance[i]= minimum_distance + *p_matrix[nextnode][i];
+                    predecessor[i]=nextnode;
+                }
+        current++;
+    }
+    long total=0;
+    for(i=1; i<dimension; i++){
+        total+=distance[i];
+    }
+    return total;
 }
 
 
