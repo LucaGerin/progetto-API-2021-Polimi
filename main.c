@@ -192,21 +192,6 @@ int search_min_heap(P_NODE heap_array[], min_heap heap, int root_index, long dis
 
 /* ___ FUNCTIONS ___*/
 
-
-
-
-/**
- * method to check if a char given as parameter is a number
- * @param x is the char given
- * @return 1 if x is a number, 0 otherwise
- */
-/*
-int is_num (char x){
-   if (x>=48 && x<=57) return 1;
-   else return 0;
-}
-*/
-
 /**
  * method to check if a char given as parameter is a space
  * @param x is the char given
@@ -229,47 +214,18 @@ int is_comma (char x){
 
 
 /**
- * Takes char array line and extracts 'amountOfNumbers' numbers and puts them in int array 'array_to_fill'
- * @requires amountOfNumbers=array_to_fill.length
- * @param line is the String from which to take the numbers
- * @param array_to_fill is the int array to fill
- * @param amountOfNumbers is the amount of numbers to extract
+ * method to check if a char given as parameter is a comma
+ * @param x is the char given
+ * @return 1 if x is a comma, 0 otherwise
  */
-void ConvertMatrixLine(char *line, int *array_to_fill, int amountOfNumbers){
-    int i=0, index=0, res;
-
-    for(; i<amountOfNumbers; i++){
-
-        res=0;
-
-        for(; !is_comma(line[index]); index++){
-            res=res*10+(line[index]-48);
-        }
-
-        array_to_fill[i]=res;
-        index++;
-
-    }
+int is_endOfLine (char x){
+    if (x=='\n') return 1;
+    else return 0;
 }
 
-/**
- * Reads a matrix from the input and puts it in the result
- * @param dimension
- * @param result
- */
-void readMatrix(int dimension, void *result){
-
-    int (*pointer)[dimension][dimension] = (int (*)[dimension][dimension]) result;
-
-    char line[MAX];
-    for(int i=0; i<dimension; i++){
-        fgets(line, MAX, stdin);
-        ConvertMatrixLine(line, *pointer[i], dimension);
-    }
-}
 
 /**
- * MEthod to read the first line containing d and k
+ * Method to read the first line containing d and k
  * @param dimension is a pointer to an int into which to store d
  * @param leaderBoardDimension is a pointer to an int into which to store k
  */
@@ -387,41 +343,67 @@ long dijkstra_matrix(void *matrix, int dimension){     //oppure long p_matrix[MA
 
 int main() {
 
-    int dimension;
+    int matrix_dimension;
 
     P_MAX_HEAP heap = malloc(sizeof(max_heap));
     heap->size=0;
 
-    readFirstLine(&dimension, &heap->length);
+    readFirstLine(&matrix_dimension, &heap->length);
 
     P_GRAPH heap_array[heap->length];
-    int matrix[heap->length][heap->length];
+    int matrix[matrix_dimension][matrix_dimension];
 
     int ID_counter=0;
 
-    char line[15];
+    char line[MAX];
 
     while((fgets(line, 15, stdin)) != NULL){
 
         if(line[0]==84){ //TopK
 
+            printf("DEBUG: letto TopK\n");
             print_heap(heap_array, heap);
 
         }
         else{ //AggiungiGrafo
 
-            readMatrix(dimension, matrix);
-            long score = dijkstra_matrix(matrix, dimension);
+            printf("DEBUG: letto AggiungiGrafo\n");
+
+            //Read the matrix from input
+            int res, index;
+            for(int l=0; l < matrix_dimension; l++){
+                fgets(line, MAX, stdin);
+                index=0;
+                for(int c=0; c < matrix_dimension; c++){
+                    res=0;
+                    for(; !is_comma(line[index]) && !is_endOfLine(line[index]); index++){
+                        res=res*10+(line[index]-48);
+                    }
+                    matrix[l][c]=res;
+                    index++;
+                }
+            }
+            //DEBUG
+            printf("DEBUG_MAIN: Ecco la matrice:\n");
+            for(int j=0; j < matrix_dimension; j++){
+                for(int k=0; k < matrix_dimension; k++){
+                    printf("%d ", matrix[j][k]);
+                }
+                printf("\n");
+            }
+
+
+            long score = dijkstra_matrix(matrix, matrix_dimension);
+            printf("Lo score è di %ld", score);
 
             if(heap->size < heap->length){
-
                 P_GRAPH new_graph = malloc(sizeof (graph));
                 new_graph->ID=ID_counter;
                 new_graph->score=score;
                 insert_max_heap(heap_array, heap, new_graph);
+                printf("DEBUG: Aggiungo alla classifica in quanto non piena\n");
             }
             else if(score < getMax(heap_array)->score){
-
                 P_GRAPH removed = removeMax(heap_array, heap);
                 free(removed);
 
@@ -429,6 +411,7 @@ int main() {
                 new_graph->ID=ID_counter;
                 new_graph->score=score;
                 insert_max_heap(heap_array, heap, new_graph);
+                printf("DEBUG: Aggiungo alla classifica sostituendo il max\n");
             }
 
             ID_counter++;
