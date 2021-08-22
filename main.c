@@ -291,11 +291,6 @@ void dijkstra_min_heap(void *matrix, int dimension){
 }
 */
 
-long dijkstra(void *matrix){
-
-}
-
-
 long dijkstra_matrix(int dimension, int (*p_matrix)[dimension]){     //oppure long p_matrix[MAX][MAX]
 
     long distance[dimension], minimum_distance;
