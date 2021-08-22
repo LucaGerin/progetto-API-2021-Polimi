@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #define MAX 3000  /*massima lunghezza riga input*/
+#define INT_MAXIMUM 2147483647
 
 /* ___ DATA STRUCTURES ___ */
 typedef struct{
@@ -290,9 +291,13 @@ void dijkstra_min_heap(void *matrix, int dimension){
 }
 */
 
-long dijkstra_matrix(void *matrix, int dimension){     //oppure long p_matrix[MAX][MAX]
+long dijkstra(void *matrix){
 
-    int (*p_matrix)[dimension][dimension] = (int (*)[dimension][dimension]) matrix;
+}
+
+
+long dijkstra_matrix(int dimension, int (*p_matrix)[dimension]){     //oppure long p_matrix[MAX][MAX]
+
     long distance[dimension], minimum_distance;
     int predecessor[dimension], visited[dimension],  next_node;
 
@@ -301,7 +306,7 @@ long dijkstra_matrix(void *matrix, int dimension){     //oppure long p_matrix[MA
     for(i=0; i < dimension; i++)
         for(j=0; j < dimension; j++){
             if(p_matrix[i][j] == 0)
-                *p_matrix[i][j] = -1;
+                p_matrix[i][j] = INT_MAXIMUM;
         }
     for(i=0; i < dimension; i++){
         distance[i]= (long) p_matrix[0][i];
@@ -313,9 +318,9 @@ long dijkstra_matrix(void *matrix, int dimension){     //oppure long p_matrix[MA
 
     int current=1;
     while(current < dimension - 1){
-        minimum_distance=-1;
+        minimum_distance=INT_MAXIMUM;
         for(i=0; i < dimension; i++){
-            if((distance[i] < minimum_distance || (distance[i]!=-1 && minimum_distance==-1)) && !visited[i]){
+            if((distance[i] < minimum_distance) && !visited[i]){
                 minimum_distance=distance[i];
                 next_node=i;
             }
@@ -323,8 +328,8 @@ long dijkstra_matrix(void *matrix, int dimension){     //oppure long p_matrix[MA
         visited[next_node]=1;
         for(i=0; i < dimension; i++)
             if(!visited[i])
-                if(minimum_distance + *p_matrix[next_node][i] < distance[i]){
-                    distance[i]= minimum_distance + *p_matrix[next_node][i];
+                if(minimum_distance + p_matrix[next_node][i] < distance[i]){
+                    distance[i]= minimum_distance + p_matrix[next_node][i];
                     predecessor[i]=next_node;
                 }
         current++;
@@ -393,7 +398,7 @@ int main() {
             }
 
 
-            long score = dijkstra_matrix(matrix, matrix_dimension);
+            long score = dijkstra_matrix(matrix_dimension, matrix);
             printf("Lo score è di %ld", score);
 
             if(heap->size < heap->length){
