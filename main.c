@@ -231,12 +231,12 @@ int is_endOfLine (char x){
  * @param leaderBoardDimension is a pointer to an int into which to store k
  */
 void readFirstLine( int *dimension, int *leaderBoardDimension){ //DEVONO ESSERE SEPARATI DA SPAZIO O DA VIRGOLA?? su slides esempio diverso da spiegazione
-    char input[MAX];
-    fgets(input, MAX, stdin);
+    char input[MAX], *result;
+    result = fgets(input, MAX, stdin);
 
     int res=0, i=0;
 
-    for(; !is_space(input[i]); i++){
+    for(; !is_space(result[i]); i++){
         res=res*10+(input[i]-48);
     }
     *dimension=res;
@@ -294,7 +294,8 @@ void dijkstra_min_heap(void *matrix, int dimension){
 long dijkstra_matrix(int dimension, int (*p_matrix)[dimension]){     //oppure long p_matrix[MAX][MAX]
 
     long distance[dimension], minimum_distance;
-    int predecessor[dimension], visited[dimension],  next_node;
+    //int predecessor[dimension];
+    int visited[dimension],  next_node=0;
 
     int i,j;
 
@@ -305,7 +306,7 @@ long dijkstra_matrix(int dimension, int (*p_matrix)[dimension]){     //oppure lo
         }
     for(i=0; i < dimension; i++){
         distance[i]= (long) p_matrix[0][i];
-        predecessor[i]=0;
+        //predecessor[i]=0;
         visited[i]=0;
     }
     distance[0]=0;
@@ -325,7 +326,7 @@ long dijkstra_matrix(int dimension, int (*p_matrix)[dimension]){     //oppure lo
             if(!visited[i])
                 if(minimum_distance + p_matrix[next_node][i] < distance[i]){
                     distance[i]= minimum_distance + p_matrix[next_node][i];
-                    predecessor[i]=next_node;
+                    //predecessor[i]=next_node;
                 }
         current++;
     }
@@ -371,12 +372,13 @@ int main() {
 
             //Read the matrix from input
             int res, index;
+            char *result;
             for(int l=0; l < matrix_dimension; l++){
-                fgets(line, MAX, stdin);
+                result = fgets(line, MAX, stdin);
                 index=0;
                 for(int c=0; c < matrix_dimension; c++){
                     res=0;
-                    for(; !is_comma(line[index]) && !is_endOfLine(line[index]); index++){
+                    for(; !is_comma(result[index]) && !is_endOfLine(line[index]); index++){
                         res=res*10+(line[index]-48);
                     }
                     matrix[l][c]=res;
@@ -420,7 +422,6 @@ int main() {
         }
 
     }
-
     free(heap);
     return 0;
 }
