@@ -412,7 +412,7 @@ long dijkstra_matrix(int dimension, long (*p_matrix)[dimension]){     //oppure l
     return total;
 }
 
-
+/*
 //NON FUNZIONA SEMPRE MA E' PIUVELOCE DELL'ALTRO
 long dijkstra(int dimension, long (*p_matrix)[dimension])
 {
@@ -458,6 +458,8 @@ long dijkstra(int dimension, long (*p_matrix)[dimension])
     }
     return total;
 }
+*/
+
 
 /* ___ MAIN ___*/
 
