@@ -11,12 +11,14 @@ typedef struct{
 } graph;
 typedef graph *P_GRAPH;
 
+/*
 typedef struct{
     int number;
     long distance;
     int predecessor;
 }node;
 typedef node *P_NODE;
+*/
 
 typedef struct{
     int length;
@@ -24,12 +26,13 @@ typedef struct{
 } max_heap;
 typedef max_heap *P_MAX_HEAP;
 
+/*
 typedef struct{
     int length;
     int size;
 } min_heap;
 typedef min_heap *P_MIN_HEAP;
-
+*/
 
 /* ___ HEAP ___ */
 
@@ -40,12 +43,13 @@ void swap_graph(P_GRAPH a, P_GRAPH b)
     *a = temp;
 }
 
+/*
 void swap_nodes(P_NODE a, P_NODE b){
     node temp = *b;
     *b = *a;
     *a = temp;
-
 }
+*/
 
 void max_heapify(P_GRAPH heap_array[], P_MAX_HEAP heap, int n){
     int left = 2*n+1;
@@ -62,6 +66,7 @@ void max_heapify(P_GRAPH heap_array[], P_MAX_HEAP heap, int n){
     }
 }
 
+/*
 void min_heapify(P_NODE nodes[], P_MIN_HEAP heap, int n){
     int left = 2*n+1;
     int right = 2*n+2;
@@ -76,6 +81,7 @@ void min_heapify(P_NODE nodes[], P_MIN_HEAP heap, int n){
         min_heapify(nodes, heap, minimum_pos);
     }
 }
+*/
 
 P_GRAPH getMax (P_GRAPH heap_array[]){
     return heap_array[0];
@@ -268,8 +274,8 @@ int is_endOfLine (char x){
  * @param leaderBoardDimension is a pointer to an int into which to store k
  */
 void readFirstLine( int *dimension, int *leaderBoardDimension){ //DEVONO ESSERE SEPARATI DA SPAZIO O DA VIRGOLA?? su slides esempio diverso da spiegazione
-    char input[MAX], *result;
-    result = fgets(input, MAX, stdin);
+    char input[200], *result;
+    result = fgets(input, 200, stdin);
 
     int res=0, i=0;
 
@@ -415,7 +421,8 @@ int main() {
 
     int matrix_dimension;
 
-    P_MAX_HEAP heap = malloc(sizeof(max_heap));
+    max_heap maxHeap;
+    P_MAX_HEAP heap = &maxHeap;
     heap->size=0;
 
     readFirstLine(&matrix_dimension, &heap->length);
@@ -495,6 +502,8 @@ int main() {
         }
 
     }
-    free(heap);
+
+    //free(heap);
+
     return 0;
 }
