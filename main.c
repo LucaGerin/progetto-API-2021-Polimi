@@ -160,8 +160,8 @@ void print_heap(P_GRAPH heap_Array[], P_MAX_HEAP heap){
             printf("%d", heap_Array[i]->ID);
             i++;
         }while(i<heap->size && fputs(" ", stdout));
-        printf("\n");
     }
+    printf("\n");
 }
 
 void print_heap_debug(P_GRAPH heap_Array[], P_MAX_HEAP heap){
