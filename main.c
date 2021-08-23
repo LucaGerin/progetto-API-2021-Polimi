@@ -160,6 +160,7 @@ void print_heap(P_GRAPH heap_Array[], P_MAX_HEAP heap){
             printf("%d", heap_Array[i]->ID);
             i++;
         }while(i<heap->size && fputs(" ", stdout));
+        printf("\n");
     }
 }
 
@@ -407,13 +408,10 @@ int main() {
 
         if(line[0]==84){ //TopK
 
-            //printf("DEBUG: letto TopK\n");
             print_heap(heap_array, heap);
 
         }
         else{ //AggiungiGrafo
-
-            //printf("DEBUG: letto AggiungiGrafo\n");
 
             //Read the matrix from input
             int res;
@@ -432,7 +430,7 @@ int main() {
                 }
             }
             //DEBUG
-
+            /*
             printf("DEBUG_MAIN: Ecco la matrice del grafico numero %d:\n", ID_counter);
             for(int j=0; j < matrix_dimension; j++){
                 for(int k=0; k < matrix_dimension; k++){
@@ -441,21 +439,21 @@ int main() {
                 }
                 printf("\n");
             }
-
+            */
 
             long score = dijkstra_matrix(matrix_dimension, matrix);
-            printf("Lo score del grafico numero %d è di %ld\n", ID_counter, score);
+            //printf("Lo score del grafico numero %d è di %ld\n", ID_counter, score);
 
             if(heap->size < heap->length){
                 P_GRAPH new_graph = malloc(sizeof (graph));
                 new_graph->ID=ID_counter;
                 new_graph->score=score;
                 insert_max_heap(heap_array, heap, new_graph);
-                printf("DEBUG: Aggiungo alla classifica il grafico %d in quanto non piena\n", ID_counter);
+                //printf("DEBUG: Aggiungo alla classifica il grafico %d in quanto non piena\n", ID_counter);
             }
             else if(score < getMax(heap_array)->score){
                 P_GRAPH removed = removeMax(heap_array, heap);
-                printf("DEBUG: Aggiungo alla classifica il grafico %d sostituendo il max che era il numero %d con score %ld\n", ID_counter, removed->ID, removed->score);
+                //printf("DEBUG: Aggiungo alla classifica il grafico %d sostituendo il max che era il numero %d con score %ld\n", ID_counter, removed->ID, removed->score);
                 free(removed);
 
                 P_GRAPH new_graph = malloc(sizeof (graph));
@@ -467,10 +465,11 @@ int main() {
             ID_counter++;
 
             //DEBUG:
+            /*
             printf("DEBUG: ecco la TopK...\n");
             print_heap_debug(heap_array, heap);
             printf("\n---------\n");
-
+            */
 
         }
 
