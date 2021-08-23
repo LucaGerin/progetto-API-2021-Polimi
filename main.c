@@ -413,6 +413,51 @@ long dijkstra_matrix(int dimension, long (*p_matrix)[dimension]){     //oppure l
 }
 
 
+//NON FUNZIONA SEMPRE MA E' PIUVELOCE DELL'ALTRO
+long dijkstra(int dimension, long (*p_matrix)[dimension])
+{
+    long distance[dimension];
+    int visited[dimension];
+    int i;
+
+    for (i = 0; i < dimension; i++){
+        distance[i] = LONG_MAXIMUM;
+        visited[i] = 0;
+    }
+
+    distance[0] = 0;
+    visited[0]=1;
+
+    for (int count = 0; count < dimension - 1; count++) {
+
+        long min = LONG_MAXIMUM;
+        int min_index=0;
+
+        for (int v = 1; v < dimension; v++)
+            if (visited[v] == 0 && distance[v] <= min){
+                min = distance[v];
+                min_index = v;
+            }
+
+        visited[min_index] = 1;
+
+        for (int v = 0; v < dimension; v++)
+
+            // Update dist[v] only if is not in sptSet, there is an edge from
+            // u to v, and total weight of path from src to  v through u is
+            // smaller than current value of dist[v]
+            if (!visited[v] && p_matrix[min_index][v] && distance[min_index] != LONG_MAXIMUM
+            && distance[min_index] + p_matrix[min_index][v] < distance[v])
+                distance[v] = distance[min_index] + p_matrix[min_index][v];
+    }
+
+    long total=0;
+    for(i=1; i<dimension; i++){
+        if(distance[i]!=LONG_MAXIMUM)
+            total+=distance[i];
+    }
+    return total;
+}
 
 /* ___ MAIN ___*/
 
