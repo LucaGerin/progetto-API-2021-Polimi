@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #define MAX 3000  /*massima lunghezza riga input*/
-#define INT_MAXIMUM 2147483647
+#define LONG_MAXIMUM 2147483647
 
 /* ___ DATA STRUCTURES ___ */
 typedef struct{
@@ -335,7 +335,7 @@ void quicksort(int a[MAX],int primo,int ultimo){
     }
 }
 
-long dijkstra_matrix(int dimension, int (*p_matrix)[dimension]){     //oppure long p_matrix[MAX][MAX]
+long dijkstra_matrix(int dimension, long (*p_matrix)[dimension]){     //oppure long p_matrix[MAX][MAX]
 
     long distance[dimension], minimum_distance;
     //int predecessor[dimension];
@@ -346,7 +346,7 @@ long dijkstra_matrix(int dimension, int (*p_matrix)[dimension]){     //oppure lo
     for(i=0; i < dimension; i++)
         for(j=0; j < dimension; j++){
             if(p_matrix[i][j] == 0)
-                p_matrix[i][j] = INT_MAXIMUM;
+                p_matrix[i][j] = LONG_MAXIMUM;
         }
     for(i=0; i < dimension; i++){
         distance[i]= (long) p_matrix[0][i];
@@ -358,7 +358,7 @@ long dijkstra_matrix(int dimension, int (*p_matrix)[dimension]){     //oppure lo
 
     int current=1;
     while(current < dimension - 1){
-        minimum_distance=INT_MAXIMUM;
+        minimum_distance=LONG_MAXIMUM;
         for(i=0; i < dimension; i++){
             if((distance[i] < minimum_distance) && !visited[i]){
                 minimum_distance=distance[i];
@@ -376,7 +376,8 @@ long dijkstra_matrix(int dimension, int (*p_matrix)[dimension]){     //oppure lo
     }
     long total=0;
     for(i=1; i<dimension; i++){
-        total+=distance[i];
+        if(distance[i]!=LONG_MAXIMUM)
+            total+=distance[i];
     }
     return total;
 }
@@ -396,7 +397,7 @@ int main() {
     readFirstLine(&matrix_dimension, &heap->length);
 
     P_GRAPH heap_array[heap->length];
-    int matrix[matrix_dimension][matrix_dimension];
+    long matrix[matrix_dimension][matrix_dimension];
 
     int ID_counter=0;
 
@@ -415,7 +416,8 @@ int main() {
             //printf("DEBUG: letto AggiungiGrafo\n");
 
             //Read the matrix from input
-            int res, index;
+            int res;
+            int index;
             char *result;
             for(int l=0; l < matrix_dimension; l++){
                 result = fgets(line, MAX, stdin);
@@ -425,7 +427,7 @@ int main() {
                     for(; !is_comma(result[index]) && !is_endOfLine(line[index]); index++){
                         res=res*10+(line[index]-48);
                     }
-                    matrix[l][c]=res;
+                    matrix[l][c]= (long) res;
                     index++;
                 }
             }
@@ -435,7 +437,7 @@ int main() {
             for(int j=0; j < matrix_dimension; j++){
                 for(int k=0; k < matrix_dimension; k++){
                     if(k==0) printf("|   ");
-                    printf("%d ", matrix[j][k]);
+                    printf("%ld ", matrix[j][k]);
                 }
                 printf("\n");
             }
