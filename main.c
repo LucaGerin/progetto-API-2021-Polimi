@@ -113,6 +113,7 @@ P_GRAPH removeMax (P_GRAPH heap_array[], P_MAX_HEAP heap) {
     return maximum;
 }
 
+
 void insert_max_heap(P_GRAPH *heap_array, P_MAX_HEAP heap, graph *graph_to_add){
     if (heap->size == 0){
         heap_array[0]=graph_to_add;
@@ -127,6 +128,25 @@ void insert_max_heap(P_GRAPH *heap_array, P_MAX_HEAP heap, graph *graph_to_add){
         }
     }
 }
+
+
+/*
+void insert_max_heap_better(P_GRAPH *heap_array, P_MAX_HEAP heap, graph *graph_to_add){
+    if (heap->size == 0){
+        heap_array[0]=graph_to_add;
+        heap->size++;
+    }
+    else{
+        heap_array[heap->size] = graph_to_add;
+        heap->size++;
+        int i = heap->size;
+        while(i>0 || heap_array[(i-1)/2]<heap_array[i]){
+            swap_graph(heap_array[i], heap_array[(i-1)/2]);
+            i=(i-1)/2;
+        }
+    }
+}
+*/
 
 /*
 void insert_min_heap(P_NODE *nodes, P_MIN_HEAP heap, P_NODE node_to_add){
@@ -161,9 +181,9 @@ void print_heap(P_GRAPH heap_Array[], P_MAX_HEAP heap){
             i++;
         }while(i<heap->size && fputs(" ", stdout));
     }
-    printf("\n");
+    fputs("\n", stdout);
 }
-
+/*
 void print_heap_debug(P_GRAPH heap_Array[], P_MAX_HEAP heap){
     if(heap->size>0){
         int i=0;
@@ -174,7 +194,9 @@ void print_heap_debug(P_GRAPH heap_Array[], P_MAX_HEAP heap){
     }
     printf("\n");
 }
+*/
 
+/*
 int search_max_heap(P_GRAPH heap_array[], max_heap heap, int root_index, long score){
     if(root_index < 0 || root_index > heap.size - 1) return 0;
     else{
@@ -188,6 +210,7 @@ int search_max_heap(P_GRAPH heap_array[], max_heap heap, int root_index, long sc
     }
     return 0;
 }
+*/
 
 /*
 int search_min_heap(P_NODE heap_array[], min_heap heap, int root_index, long distance){
@@ -454,12 +477,10 @@ int main() {
             else if(score < getMax(heap_array)->score){
                 P_GRAPH removed = removeMax(heap_array, heap);
                 //printf("DEBUG: Aggiungo alla classifica il grafico %d sostituendo il max che era il numero %d con score %ld\n", ID_counter, removed->ID, removed->score);
-                free(removed);
 
-                P_GRAPH new_graph = malloc(sizeof (graph));
-                new_graph->ID=ID_counter;
-                new_graph->score=score;
-                insert_max_heap(heap_array, heap, new_graph);
+                removed->ID=ID_counter;
+                removed->score=score;
+                insert_max_heap(heap_array, heap, removed);
             }
 
             ID_counter++;
