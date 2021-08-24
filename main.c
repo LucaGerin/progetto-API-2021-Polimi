@@ -106,7 +106,7 @@ P_NODE removeMin (P_NODE nodes[], P_MIN_HEAP heap){
 }
 */
 
-
+/*
 P_GRAPH removeMax (P_GRAPH heap_array[], P_MAX_HEAP heap) {
     if(heap->size<1){
         // si verifica mai questo caso? lo controllo qui o fuori dalla funzione?
@@ -118,7 +118,7 @@ P_GRAPH removeMax (P_GRAPH heap_array[], P_MAX_HEAP heap) {
     max_heapify(heap_array, heap, 0);
     return maximum;
 }
-
+*/
 
 void insert_max_heap(P_GRAPH *heap_array, P_MAX_HEAP heap, graph *graph_to_add){
     if (heap->size == 0){
@@ -133,6 +133,13 @@ void insert_max_heap(P_GRAPH *heap_array, P_MAX_HEAP heap, graph *graph_to_add){
             max_heapify(heap_array, heap, i);
         }
     }
+}
+
+
+void replace_max(P_GRAPH *heap_array, P_MAX_HEAP heap, long new_score, int new_ID){
+    heap_array[0]->score = new_score;
+    heap_array[0]->ID = new_ID;
+    max_heapify(heap_array, heap, 0);
 }
 
 
@@ -334,36 +341,6 @@ void dijkstra_min_heap(void *matrix, int dimension){
 }
 */
 
-//TO REMOVE!!!!
-void quicksort(int a[MAX],int primo,int ultimo){
-    int i, j, pivot, temp;
-    /*pivot -- inizialmente il pivot è il primo elemento
-    primo e ultimo sono le due variabili che servono per scorrere l'array
-    */
-    if(primo<ultimo){
-        pivot=primo;
-        i=primo;
-        j=ultimo;
-
-        while(i<j){
-            while(a[i]<=a[pivot]&&i<ultimo)
-                i++;
-            while(a[j]>a[pivot])
-                j--;
-            if(i<j){
-                temp=a[i];
-                a[i]=a[j];
-                a[j]=temp;
-            }
-        }
-
-        temp=a[pivot];
-        a[pivot]=a[j];
-        a[j]=temp;
-        quicksort(a,primo,j-1);
-        quicksort(a,j+1,ultimo);
-    }
-}
 
 long dijkstra_matrix(int dimension, long (*p_matrix)[dimension]){     //oppure long p_matrix[MAX][MAX]
 
@@ -529,12 +506,15 @@ int main() {
                 //printf("DEBUG: Aggiungo alla classifica il grafico %d in quanto non piena\n", ID_counter);
             }
             else if(score < getMax(heap_array)->score){
+                replace_max(heap_array, heap, score, ID_counter);
+                /*
                 P_GRAPH removed = removeMax(heap_array, heap);
                 //printf("DEBUG: Aggiungo alla classifica il grafico %d sostituendo il max che era il numero %d con score %ld\n", ID_counter, removed->ID, removed->score);
 
                 removed->ID=ID_counter;
                 removed->score=score;
                 insert_max_heap(heap_array, heap, removed);
+                 */
             }
 
             ID_counter++;
