@@ -2,12 +2,12 @@
 #include <stdlib.h>
 
 #define MAX 3000  /*massima lunghezza riga input*/
-#define LONG_MAXIMUM 2147483647
+#define INT_MAXIMUM 2147483647
 
 /* ___ DATA STRUCTURES ___ */
 typedef struct{
     int ID;
-    long score; //serve long int? qual è massimo raggiungibile?
+    int score; //serve long int? qual è massimo raggiungibile?
 } graph;
 typedef graph *P_GRAPH;
 
@@ -136,7 +136,7 @@ void insert_max_heap(P_GRAPH *heap_array, P_MAX_HEAP heap, graph *graph_to_add){
 }
 
 
-void replace_max(P_GRAPH *heap_array, P_MAX_HEAP heap, long new_score, int new_ID){
+void replace_max(P_GRAPH heap_array[], P_MAX_HEAP heap, int new_score, int new_ID){
     heap_array[0]->score = new_score;
     heap_array[0]->ID = new_ID;
     max_heapify(heap_array, heap, 0);
@@ -259,28 +259,37 @@ int is_space (char x){
  * @param x is the char given
  * @return 1 if x is a comma, 0 otherwise
  */
+ /*
 int is_comma (char x){
     if (x==44) return 1;
     else return 0;
 }
-
+*/
 
 /**
  * method to check if a char given as parameter is a comma
  * @param x is the char given
  * @return 1 if x is a comma, 0 otherwise
  */
+ /*
 int is_endOfLine (char x){
     if (x=='\n') return 1;
     else return 0;
 }
+*/
 
+
+int is_number (char x){
+    if (x>47 && x<58) return 1;
+    else return 0;
+}
 
 /**
  * Method to read the first line containing d and k
  * @param dimension is a pointer to an int into which to store d
  * @param leaderBoardDimension is a pointer to an int into which to store k
  */
+ /*
 void readFirstLine( int *dimension, int *leaderBoardDimension){ //DEVONO ESSERE SEPARATI DA SPAZIO O DA VIRGOLA?? su slides esempio diverso da spiegazione
     char input[200], *result;
     result = fgets(input, 200, stdin);
@@ -299,6 +308,7 @@ void readFirstLine( int *dimension, int *leaderBoardDimension){ //DEVONO ESSERE 
     }
     *leaderBoardDimension=res;
 }
+  */
 
 /**
  * Method to read a command
@@ -342,7 +352,7 @@ void dijkstra_min_heap(void *matrix, int dimension){
 }
 */
 
-
+/*
 long dijkstra_matrix(int dimension, long (*p_matrix)[dimension]){     //oppure long p_matrix[MAX][MAX]
 
     long distance[dimension], minimum_distance;
@@ -354,7 +364,7 @@ long dijkstra_matrix(int dimension, long (*p_matrix)[dimension]){     //oppure l
     for(i=0; i < dimension; i++)
         for(j=0; j < dimension; j++){
             if(p_matrix[i][j] == 0)
-                p_matrix[i][j] = LONG_MAXIMUM;
+                p_matrix[i][j] = INT_MAXIMUM;
         }
     for(i=0; i < dimension; i++){
         distance[i]= (long) p_matrix[0][i];
@@ -366,7 +376,7 @@ long dijkstra_matrix(int dimension, long (*p_matrix)[dimension]){     //oppure l
 
     int current=1;
     while(current < dimension - 1){
-        minimum_distance=LONG_MAXIMUM;
+        minimum_distance=INT_MAXIMUM;
         for(i=0; i < dimension; i++){
             if((distance[i] < minimum_distance) && !visited[i]){
                 minimum_distance=distance[i];
@@ -384,11 +394,12 @@ long dijkstra_matrix(int dimension, long (*p_matrix)[dimension]){     //oppure l
     }
     long total=0;
     for(i=1; i<dimension; i++){
-        if(distance[i]!=LONG_MAXIMUM)
+        if(distance[i]!=INT_MAXIMUM)
             total+=distance[i];
     }
     return total;
 }
+*/
 
 /*
 //NON FUNZIONA SEMPRE MA E' PIUVELOCE DELL'ALTRO
@@ -399,7 +410,7 @@ long dijkstra(int dimension, long (*p_matrix)[dimension])
     int i;
 
     for (i = 0; i < dimension; i++){
-        distance[i] = LONG_MAXIMUM;
+        distance[i] = INT_MAXIMUM;
         visited[i] = 0;
     }
 
@@ -408,7 +419,7 @@ long dijkstra(int dimension, long (*p_matrix)[dimension])
 
     for (int count = 0; count < dimension - 1; count++) {
 
-        long min = LONG_MAXIMUM;
+        long min = INT_MAXIMUM;
         int min_index=0;
 
         for (int v = 1; v < dimension; v++)
@@ -424,27 +435,27 @@ long dijkstra(int dimension, long (*p_matrix)[dimension])
             // Update dist[v] only if is not in sptSet, there is an edge from
             // u to v, and total weight of path from src to  v through u is
             // smaller than current value of dist[v]
-            if (!visited[v] && p_matrix[min_index][v] && distance[min_index] != LONG_MAXIMUM
+            if (!visited[v] && p_matrix[min_index][v] && distance[min_index] != INT_MAXIMUM
             && distance[min_index] + p_matrix[min_index][v] < distance[v])
                 distance[v] = distance[min_index] + p_matrix[min_index][v];
     }
 
     long total=0;
     for(i=1; i<dimension; i++){
-        if(distance[i]!=LONG_MAXIMUM)
+        if(distance[i]!=INT_MAXIMUM)
             total+=distance[i];
     }
     return total;
 }
 */
 
-long dijkstra_matrix_2(int dimension, long (*p_matrix)[dimension]){
-    long distance[dimension], alt, min_distance;
+int dijkstra_matrix_2(int dimension, int (*p_matrix)[dimension]){
+    int distance[dimension], alt, min_distance;
     int visited[dimension];
     int i;
 
     for(i=0; i<dimension; i++){
-        distance[i]=LONG_MAXIMUM;
+        distance[i]=INT_MAXIMUM;
         visited[i]=0;
     }
     distance[0]=0;
@@ -453,7 +464,7 @@ long dijkstra_matrix_2(int dimension, long (*p_matrix)[dimension]){
     while(cnt<dimension-1){
 
         int u=0;
-        min_distance=LONG_MAXIMUM;
+        min_distance=INT_MAXIMUM;
         for(i=0; i<dimension; i++){
             if(distance[i]<min_distance && visited[i]==0){
                 min_distance=distance[i];
@@ -461,11 +472,11 @@ long dijkstra_matrix_2(int dimension, long (*p_matrix)[dimension]){
             }
         }
         visited[u]=1;
-        if(distance[u]==LONG_MAXIMUM) break;
+        if(distance[u] == INT_MAXIMUM) break;
 
         for(i=0; i<dimension; i++){
             if(p_matrix[u][i]>0){
-                alt = distance[u] + (long) p_matrix[u][i];
+                alt = distance[u] + p_matrix[u][i];
                 if(alt < distance[i]){
                     distance[i] = alt;
 
@@ -475,15 +486,14 @@ long dijkstra_matrix_2(int dimension, long (*p_matrix)[dimension]){
         cnt++;
     }
 
-    long total=0;
+    int total=0;
     for(i=1; i<dimension; i++){
-        if(distance[i]!=LONG_MAXIMUM)
+        if(distance[i] != INT_MAXIMUM)
             total+=distance[i];
     }
     return total;
 
 }
-
 
 
 
@@ -498,16 +508,34 @@ int main() {
     P_MAX_HEAP heap = &maxHeap;
     heap->size=0;
 
-    readFirstLine(&matrix_dimension, &heap->length);
+    //readFirstLine(&matrix_dimension, &heap->length);
+
+    char input[200];
+    int res=0, i=0;
+    if(fgets(input, 200, stdin)){
+        for(; !is_space(input[i]); i++){
+            res=res*10+(input[i]-48);
+        }
+    }
+
+    matrix_dimension=res;
+
+    i++;
+    res=0;
+    for(;is_number(input[i]);i++){
+        res=res*10+(input[i]-48);
+    }
+    heap->length=res;
+    //
 
     P_GRAPH heap_array[heap->length];
-    long matrix[matrix_dimension][matrix_dimension];
+    int matrix[matrix_dimension][matrix_dimension];
 
     int ID_counter=0;
 
     char line[MAX];
 
-    while((fgets(line, 15, stdin)) != NULL){
+    while((fgets(line, 15, stdin))){
 
         if(line[0]==84){ //TopK
 
@@ -517,20 +545,21 @@ int main() {
         else{ //AggiungiGrafo
 
             //Read the matrix from input
-            int res;
             int index;
-            char *result;
+            //char *result;
             for(int l=0; l < matrix_dimension; l++){
-                result = fgets(line, MAX, stdin);
-                index=0;
-                for(int c=0; c < matrix_dimension; c++){
-                    res=0;
-                    for(; !is_comma(result[index]) && !is_endOfLine(line[index]); index++){
-                        res=res*10+(line[index]-48);
+                if(fgets(line, MAX, stdin)){
+                    index=0;
+                    for(int c=0; c < matrix_dimension; c++){
+                        res=0;
+                        for(; is_number(line[index]); index++){
+                            res=res*10+(line[index]-48);
+                        }
+                        matrix[l][c]= res;
+                        index++;
                     }
-                    matrix[l][c]= (long) res;
-                    index++;
                 }
+
             }
             //DEBUG
             /*
@@ -544,7 +573,7 @@ int main() {
             }
             */
 
-            long score = dijkstra_matrix_2(matrix_dimension, matrix);
+            int score = dijkstra_matrix_2(matrix_dimension, matrix);
             //printf("Lo score del grafico numero %d è di %ld\n", ID_counter, score);
 
             if(heap->size < heap->length){
