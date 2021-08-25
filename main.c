@@ -121,18 +121,15 @@ P_GRAPH removeMax (P_GRAPH heap_array[], P_MAX_HEAP heap) {
 */
 
 void insert_max_heap(P_GRAPH *heap_array, P_MAX_HEAP heap, graph *graph_to_add){
-    if (heap->size == 0){
-        heap_array[0]=graph_to_add;
-        heap->size++;
+
+    heap->size++;
+    heap_array[heap->size-1] = graph_to_add;
+    int i=heap->size-1;
+    while(i>0 && heap_array[(i-1)/2]<heap_array[i]){
+        swap_graph(heap_array[(i-1)/2],heap_array[i]);
+        i=(i-1)/2;
     }
-    else
-    {
-        heap_array[heap->size] = graph_to_add;
-        heap->size++;
-        for (int i = heap->size / 2 - 1; i >= 0; i--){
-            max_heapify(heap_array, heap, i);
-        }
-    }
+
 }
 
 
