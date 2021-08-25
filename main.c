@@ -125,7 +125,7 @@ void insert_max_heap(P_GRAPH *heap_array, P_MAX_HEAP heap, graph *graph_to_add){
     heap->size++;
     heap_array[heap->size-1] = graph_to_add;
     int i=heap->size-1;
-    while(i>0 && heap_array[(i-1)/2]<heap_array[i]){
+    while(i>0 && heap_array[(i-1)/2]->score<heap_array[i]->score){
         swap_graph(heap_array[(i-1)/2],heap_array[i]);
         i=(i-1)/2;
     }
@@ -194,18 +194,18 @@ void print_heap(P_GRAPH heap_Array[], P_MAX_HEAP heap){
     fputs("\n", stdout);
 }
 
-/*
+
 void print_heap_debug(P_GRAPH heap_Array[], P_MAX_HEAP heap){
     if(heap->size>0){
         int i=0;
         do{
-            printf("%d: %ld", heap_Array[i]->ID, heap_Array[i]->score);
+            printf("%d: %d", heap_Array[i]->ID, heap_Array[i]->score);
             i++;
         }while(i<heap->size && fputs(" \n", stdout));
     }
     printf("\n");
 }
-*/
+
 
 /*
 int search_max_heap(P_GRAPH heap_array[], max_heap heap, int root_index, long score){
@@ -307,52 +307,10 @@ void readFirstLine( int *dimension, int *leaderBoardDimension){ //DEVONO ESSERE 
 }
   */
 
-/**
- * Method to read a command
- * @return the first letter of the line on the stdin
- */
- /*
-int readCommand(){
-    char line[15];
-    char* result = fgets(line, 15, stdin);
-    return line[0];
-}
-*/
-
 /*
-void dijkstra_min_heap(void *matrix, int dimension){
+int dijkstra_matrix(int dimension, int (*p_matrix)[dimension]){     //oppure long p_matrix[MAX][MAX]
 
-    int (*p_matrix)[dimension][dimension] = (int (*)[dimension][dimension]) matrix;
-    long score=0;
-    P_MIN_HEAP q = malloc(sizeof (min_heap));
-    P_NODE q_vector[dimension];
-    q->size=0;
-    q->length=dimension;
-    for(int i=1; i<dimension; i++){
-        P_NODE v_node = malloc(sizeof(node));
-        v_node->number=i;
-        v_node->distance=-1;
-        v_node->predecessor=-1;
-        insert_min_heap(q_vector, q, v_node);
-    }
-
-    while (q->size>0){
-        P_NODE u = removeMin(q_vector, q);
-        for(int succ=0; succ<dimension && p_matrix[u->number][succ]>0 ;succ++){
-            long new_distance = u->distance + (long)(int)*p_matrix[u->number][succ];
-            //if v:dist > ndis
-            //  succ:dist  = ndis
-            //  succ:prev  ) u
-            //  DecrementaPri(Q; v; ndis)
-        }
-    }
-}
-*/
-
-/*
-long dijkstra_matrix(int dimension, long (*p_matrix)[dimension]){     //oppure long p_matrix[MAX][MAX]
-
-    long distance[dimension], minimum_distance;
+    int distance[dimension], minimum_distance;
     //int predecessor[dimension];
     int visited[dimension],  next_node=0;
 
@@ -364,7 +322,7 @@ long dijkstra_matrix(int dimension, long (*p_matrix)[dimension]){     //oppure l
                 p_matrix[i][j] = INT_MAXIMUM;
         }
     for(i=0; i < dimension; i++){
-        distance[i]= (long) p_matrix[0][i];
+        distance[i]= p_matrix[0][i];
         //predecessor[i]=0;
         visited[i]=0;
     }
@@ -389,55 +347,7 @@ long dijkstra_matrix(int dimension, long (*p_matrix)[dimension]){     //oppure l
                 }
         current++;
     }
-    long total=0;
-    for(i=1; i<dimension; i++){
-        if(distance[i]!=INT_MAXIMUM)
-            total+=distance[i];
-    }
-    return total;
-}
-*/
-
-/*
-//NON FUNZIONA SEMPRE MA E' PIUVELOCE DELL'ALTRO
-long dijkstra(int dimension, long (*p_matrix)[dimension])
-{
-    long distance[dimension];
-    int visited[dimension];
-    int i;
-
-    for (i = 0; i < dimension; i++){
-        distance[i] = INT_MAXIMUM;
-        visited[i] = 0;
-    }
-
-    distance[0] = 0;
-    visited[0]=1;
-
-    for (int count = 0; count < dimension - 1; count++) {
-
-        long min = INT_MAXIMUM;
-        int min_index=0;
-
-        for (int v = 1; v < dimension; v++)
-            if (visited[v] == 0 && distance[v] <= min){
-                min = distance[v];
-                min_index = v;
-            }
-
-        visited[min_index] = 1;
-
-        for (int v = 0; v < dimension; v++)
-
-            // Update dist[v] only if is not in sptSet, there is an edge from
-            // u to v, and total weight of path from src to  v through u is
-            // smaller than current value of dist[v]
-            if (!visited[v] && p_matrix[min_index][v] && distance[min_index] != INT_MAXIMUM
-            && distance[min_index] + p_matrix[min_index][v] < distance[v])
-                distance[v] = distance[min_index] + p_matrix[min_index][v];
-    }
-
-    long total=0;
+    int total=0;
     for(i=1; i<dimension; i++){
         if(distance[i]!=INT_MAXIMUM)
             total+=distance[i];
@@ -528,6 +438,8 @@ int main() {
     P_GRAPH heap_array[heap->length];
     int matrix[matrix_dimension][matrix_dimension];
 
+    //printf("DEBUG: nella prima linea ho letto: %d, %d\n\n", matrix_dimension, heap->length);
+
     int ID_counter=0;
 
     char line[MAX];
@@ -571,7 +483,7 @@ int main() {
             */
 
             int score = dijkstra_matrix_2(matrix_dimension, matrix);
-            //printf("Lo score del grafico numero %d è di %ld\n", ID_counter, score);
+            //printf("Lo score del grafico numero %d è di %d\n", ID_counter, score);
 
             if(heap->size < heap->length){
                 P_GRAPH new_graph = malloc(sizeof (graph));
